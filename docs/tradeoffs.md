@@ -1,10 +1,9 @@
 # Trade-offs Analysis — Textile Pilling Simulator
 
-## InoCrowd Challenge 2026 | NICE Challenge 2026 (Secondary Submission)
-
 **Version:** v1.0
 **Date:** April 2026
 **Author:** Sheldon K. Salmon — AionSystem
+**License:** GPL-3.0
 
 ---
 
@@ -39,7 +38,7 @@ Pilling resistance does not exist in isolation. Every parameter change that impr
 | 60-80% | ✅ Good | ❌ Reduced | ❌ Reduced | ❌ Synthetic feel |
 | 80-100% | ✅ Excellent | ❌ Poor | ❌ Poor | ❌ Plastic-like |
 
-**Challenge requirement:** Material scope is polyester-dominant blends (polyester represents the predominant proportion). The optimal balance for most fashion applications is 60-80% polyester.
+**Note:** The material scope for this simulator is polyester-dominant blends. The optimal balance for most applications is 60-80% polyester.
 
 **Citation:** Polyester as anchor fibre — *"Weaker fibers that detach become entangled with stronger synthetic fibers such as polyester, which act as anchors and hold pills in place over a longer period"* (Textile Research Journal, multiple studies).
 
@@ -57,7 +56,7 @@ Pilling resistance does not exist in isolation. Every parameter change that impr
 
 **Data source:** Estimated from industry standard finishing costs. Exact figures vary by mill and scale.
 
-**Sustainability note:** Resin finishing typically uses formaldehyde-based cross-linking agents. For companies pursuing carbon neutrality (the Seeker's stated goal), mechanical treatments (singeing, shearing) are preferable to chemical treatments despite lower efficacy.
+**Sustainability note:** Resin finishing typically uses formaldehyde-based cross-linking agents. Mechanical treatments (singeing, shearing) are preferable for sustainability despite lower efficacy.
 
 ---
 
@@ -88,7 +87,7 @@ Pilling resistance does not exist in isolation. Every parameter change that impr
 
 **Citation:** *"Yarns with low twist and high hairiness are more prone to pilling"* — *12—Pilling of Fabrics*, 1956
 
-**Economic trade-off:** Higher twist increases manufacturing time and energy consumption. For the Seeker's carbon neutrality goal, optimal twist (not maximum) is recommended.
+**Economic trade-off:** Higher twist increases manufacturing time and energy consumption.
 
 ---
 
@@ -99,9 +98,7 @@ Pilling resistance does not exist in isolation. Every parameter change that impr
 | Mechanical (singeing, shearing) | 10-15% | Low | None | None |
 | Chemical (resin, anti-pilling) | 20-35% | Medium | High | Formaldehyde, VOCs |
 
-**Seeker context:** The company aims to be *"the first European textile industry to achieve operational carbon neutrality by 2027."*
-
-**Recommendation:** Prioritize mechanical finishing (singeing, shearing) despite lower pilling reduction. Chemical treatments should be used only when mechanical methods cannot achieve Class 3.
+**Recommendation:** Prioritize mechanical finishing (singeing, shearing) despite lower pilling reduction when sustainability is a priority. Chemical treatments should be used only when mechanical methods cannot achieve target class.
 
 ---
 
@@ -137,7 +134,7 @@ The simulator displays these trade-offs in real-time as the user adjusts paramet
 | Cost estimates are relative, not absolute | Actual costs vary by mill, scale, location | `[ASSUMPTION]` |
 | Hand-feel is approximated from weave + finishing | Actual hand-feel depends on many factors not in model | `[ASSUMPTION]` |
 | Durability = pilling resistance | Durability has multiple dimensions (tear strength, abrasion, etc.) | `[ASSUMPTION]` |
-| Mechanical finishing has zero CO2 impact | Significant reduction, but not zero | `[ASSUMPTION]` |
+| Mechanical finishing has minimal CO2 impact | Significant reduction, but not zero | `[ASSUMPTION]` |
 
 ---
 
