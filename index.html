@@ -1,1 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="Textile Pilling Simulator — Quantify the relative influence of parameters on pilling in woven fabrics. ISO 12945-2:2000 compliant.">
+    <meta name="author" content="Sheldon K. Salmon — AionSystem">
+    <title>Textile Pilling Simulator | AionSystem</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">AION<span>system</span></span>
+            </div>
+            <div class="badge">
+                <span class="badge-icon">🧪</span>
+                <span>InoCrowd Challenge 2026</span>
+            </div>
+        </div>
 
+        <h1>Textile Pilling Simulator</h1>
+        <p class="subtitle">Quantifying the relative influence of parameters on pilling in woven fabrics — <strong>ISO 12945-2:2000 compliant</strong></p>
+
+        <div class="two-column">
+            <!-- LEFT COLUMN: INPUTS -->
+            <div class="inputs-panel">
+                <!-- PHASE 1: FIBRE -->
+                <div class="phase-card">
+                    <div class="phase-header">
+                        <span class="phase-number">01</span>
+                        <h2>Fibre Parameters</h2>
+                        <span class="phase-weight">35% influence</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Polyester (%) <span id="polyesterVal" class="param-value">60</span></label>
+                        <input type="range" id="polyester" min="0" max="100" step="1" value="60">
+                        <label>Viscose (%) <span id="viscoseVal" class="param-value">30</span></label>
+                        <input type="range" id="viscose" min="0" max="100" step="1" value="30">
+                        <label>Wool (%) <span id="woolVal" class="param-value">10</span></label>
+                        <input type="range" id="wool" min="0" max="100" step="1" value="10">
+                        <label>Elastane (%) <span id="elastaneVal" class="param-value">0</span></label>
+                        <input type="range" id="elastane" min="0" max="20" step="1" value="0">
+                        <div class="note">Total: <span id="totalFibre">100</span>%</div>
+                        <label>Fibre length <span id="fibreLengthVal" class="param-value">Medium</span></label>
+                        <input type="range" id="fibreLength" min="0" max="100" step="1" value="60">
+                        <div class="slider-labels"><span>Short</span><span>Medium</span><span>Long</span></div>
+                        <label>Fibre denier <span id="fibreDenierVal" class="param-value">Medium</span></label>
+                        <input type="range" id="fibreDenier" min="0" max="100" step="1" value="50">
+                        <div class="slider-labels"><span>Fine</span><span>Medium</span><span>Coarse</span></div>
+                        <label>Fibre crimp <span id="fibreCrimpVal" class="param-value">Medium</span></label>
+                        <input type="range" id="fibreCrimp" min="0" max="100" step="1" value="50">
+                        <div class="slider-labels"><span>Low</span><span>Medium</span><span>High</span></div>
+                    </div>
+                </div>
+
+                <!-- PHASE 2: YARN -->
+                <div class="phase-card">
+                    <div class="phase-header">
+                        <span class="phase-number">02</span>
+                        <h2>Yarn Parameters</h2>
+                        <span class="phase-weight">25% influence</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Twist (tpm) <span id="twistVal" class="param-value">750</span></label>
+                        <input type="range" id="twist" min="400" max="1200" step="10" value="750">
+                        <div class="slider-labels"><span>Low</span><span>Optimal (700-900)</span><span>High</span></div>
+                        <label>Hairiness (H) <span id="hairinessVal" class="param-value">3.2</span></label>
+                        <input type="range" id="hairiness" min="2.0" max="8.0" step="0.1" value="3.2">
+                        <div class="slider-labels"><span>Low</span><span>Medium</span><span>High</span></div>
+                        <label>Spinning method</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn" data-yarn="ring">Ring-spun</button>
+                            <button class="toggle-btn active" data-yarn="openend">Open-end</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHASE 3: CONSTRUCTION -->
+                <div class="phase-card">
+                    <div class="phase-header">
+                        <span class="phase-number">03</span>
+                        <h2>Fabric Construction</h2>
+                        <span class="phase-weight">25% influence</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Weave type</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn active" data-weave="plain">Plain</button>
+                            <button class="toggle-btn" data-weave="twill">Twill</button>
+                            <button class="toggle-btn" data-weave="satin">Satin</button>
+                        </div>
+                        <label>Warp density (picks/cm) <span id="warpVal" class="param-value">48</span></label>
+                        <input type="range" id="warpDensity" min="20" max="60" step="1" value="48">
+                        <label>Weft density (picks/cm) <span id="weftVal" class="param-value">42</span></label>
+                        <input type="range" id="weftDensity" min="20" max="55" step="1" value="42">
+                        <label>Fabric mass (gsm) <span id="massVal" class="param-value">160</span></label>
+                        <input type="range" id="fabricMass" min="80" max="300" step="5" value="160">
+                    </div>
+                </div>
+
+                <!-- PHASE 4: FINISHING -->
+                <div class="phase-card">
+                    <div class="phase-header">
+                        <span class="phase-number">04</span>
+                        <h2>Finishing Treatments</h2>
+                        <span class="phase-weight">15% influence</span>
+                    </div>
+                    <div class="param-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="singeing"> Singeing
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="mercerization"> Mercerization
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="antiPilling"> Anti-pilling chemical
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="resin"> Resin finishing
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="softening"> Softening agent
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="shearing"> Shearing
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: RESULTS -->
+            <div class="results-panel">
+                <div class="result-card">
+                    <div class="result-label">Predicted Pilling Class</div>
+                    <div class="result-value" id="pillingClass">3.4</div>
+                    <div class="result-status" id="pillingStatus">✅ PASS (≥3)</div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-label">Confidence Score</div>
+                    <div class="result-value" id="confidence">82</div>
+                    <div class="result-unit">%</div>
+                    <div class="result-sub" id="uncertaintyMass">UM: 0.18</div>
+                </div>
+
+                <div class="influence-card">
+                    <div class="result-label">Relative Influence</div>
+                    <div class="influence-bars">
+                        <div class="influence-item">
+                            <span>Fibre</span>
+                            <div class="bar-container"><div class="bar" id="fibreBar" style="width: 32%"></div></div>
+                            <span id="fibrePct">32%</span>
+                        </div>
+                        <div class="influence-item">
+                            <span>Yarn</span>
+                            <div class="bar-container"><div class="bar" id="yarnBar" style="width: 28%"></div></div>
+                            <span id="yarnPct">28%</span>
+                        </div>
+                        <div class="influence-item">
+                            <span>Construction</span>
+                            <div class="bar-container"><div class="bar" id="constBar" style="width: 25%"></div></div>
+                            <span id="constPct">25%</span>
+                        </div>
+                        <div class="influence-item">
+                            <span>Finishing</span>
+                            <div class="bar-container"><div class="bar" id="finishBar" style="width: 15%"></div></div>
+                            <span id="finishPct">15%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explanation-card">
+                    <div class="result-label">Explanation</div>
+                    <ul id="explanationList">
+                        <li>• Polyester 60% provides good anchor but holds pills</li>
+                        <li>• Twist 750 tpm is optimal for this blend</li>
+                        <li>• Plain weave + anti-pilling pushes class to 3.4</li>
+                    </ul>
+                </div>
+
+                <div class="tradeoff-card">
+                    <div class="result-label">Trade-offs</div>
+                    <div class="tradeoff-item">
+                        <span>Durability</span>
+                        <div class="bar-container"><div class="bar durability-bar" id="durabilityBar" style="width: 75%"></div></div>
+                    </div>
+                    <div class="tradeoff-item">
+                        <span>Hand-feel</span>
+                        <div class="bar-container"><div class="bar handfeel-bar" id="handfeelBar" style="width: 65%"></div></div>
+                    </div>
+                    <div class="tradeoff-item">
+                        <span>Cost estimate</span>
+                        <span id="costEstimate">+8% vs baseline</span>
+                    </div>
+                </div>
+
+                <button id="resetBtn" class="reset-btn">⟳ Reset to Defaults</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-left">
+                <span>◈ AION Constitutional Stack</span>
+                <span>|</span>
+                <span>ISO 12945-2:2000 Compliant</span>
+                <span>|</span>
+                <span>Methodology: <a href="docs/methodology.md" target="_blank">docs/methodology.md</a></span>
+            </div>
+            <div class="footer-right">
+                <span>Sheldon K. Salmon — AionSystem</span>
+                <span>|</span>
+                <span><a href="https://github.com/AionSystem/PILLING-SIMULATOR" target="_blank">GitHub ↗</a></span>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
