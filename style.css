@@ -45,6 +45,8 @@ body {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .logo {
@@ -94,6 +96,12 @@ h1 {
     font-size: 0.875rem;
 }
 
+/* Tooltip */
+.tooltip {
+    border-bottom: 1px dotted var(--amber);
+    cursor: help;
+}
+
 /* Two-column layout */
 .two-column {
     display: grid;
@@ -117,6 +125,7 @@ h1 {
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
 }
 
 .phase-number {
@@ -160,6 +169,15 @@ h1 {
 .param-value {
     color: var(--amber);
     font-family: var(--font-mono);
+}
+
+.assumption-badge {
+    font-size: 0.6rem;
+    color: var(--muted);
+    background: rgba(78, 95, 106, 0.2);
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
 }
 
 input[type="range"] {
@@ -431,5 +449,12 @@ input[type="range"]::-webkit-slider-thumb {
     .footer {
         flex-direction: column;
         text-align: center;
+    }
+    .phase-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .result-value {
+        font-size: 2.5rem;
     }
 }
