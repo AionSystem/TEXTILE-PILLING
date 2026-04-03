@@ -49,40 +49,54 @@ const explanationList = document.getElementById('explanationList');
 let yarnMethod = 'openend';
 let weaveType = 'plain';
 
-// Initialize event listeners
-function initEventListeners() {
-    const sliders = [polyesterSlider, viscoseSlider, woolSlider, elastaneSlider, fibreLengthSlider, fibreDenierSlider, fibreCrimpSlider, twistSlider, hairinessSlider, warpSlider, weftSlider, massSlider];
-    sliders.forEach(slider => {
-        slider.addEventListener('input', updateAll);
-    });
-
-    document.querySelectorAll('[data-yarn]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('[data-yarn]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            yarnMethod = btn.getAttribute('data-yarn');
-            updateAll();
-        });
-    });
-
-    document.querySelectorAll('[data-weave]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('[data-weave]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            weaveType = btn.getAttribute('data-weave');
-            updateAll();
-        });
-    });
-
-    const checkboxes = ['singeing', 'mercerization', 'antiPilling', 'resin', 'softening', 'shearing'];
-    checkboxes.forEach(id => {
-        document.getElementById(id).addEventListener('change', updateAll);
-    });
-
-    document.getElementById('resetBtn').addEventListener('click', resetToDefaults);
+// ============================================
+// FIBRE BLEND ENFORCEMENT (Fix RT-001 & RT-012)
+// ============================================
+function enforceFibreBlend(changedSlider) {
+    let poly = parseInt(polyesterSlider.value);
+    let vis = parseInt(viscoseSlider.value);
+    let wool = parseInt(woolSlider.value);
+    let elast = parseInt(elastaneSlider.value);
+    let total = poly + vis + wool + elast;
+    
+    if (total === 100) return;
+    if (total === 0) return;
+    
+    // Adjust proportionally
+    let ratio = 100 / total;
+    
+    if (changedSlider === polyesterSlider) {
+        vis = Math.round(vis * ratio);
+        wool = Math.round(wool * ratio);
+        elast = Math.round(elast * ratio);
+        poly = 100 - vis - wool - elast;
+    } else if (changedSlider === viscoseSlider) {
+        poly = Math.round(poly * ratio);
+        wool = Math.round(wool * ratio);
+        elast = Math.round(elast * ratio);
+        vis = 100 - poly - wool - elast;
+    } else if (changedSlider === woolSlider) {
+        poly = Math.round(poly * ratio);
+        vis = Math.round(vis * ratio);
+        elast = Math.round(elast * ratio);
+        wool = 100 - poly - vis - elast;
+    } else {
+        poly = Math.round(poly * ratio);
+        vis = Math.round(vis * ratio);
+        wool = Math.round(wool * ratio);
+        elast = 100 - poly - vis - wool;
+    }
+    
+    // Ensure non-negative and within bounds
+    polyesterSlider.value = Math.max(0, Math.min(100, poly));
+    viscoseSlider.value = Math.max(0, Math.min(100, vis));
+    woolSlider.value = Math.max(0, Math.min(100, wool));
+    elastaneSlider.value = Math.max(0, Math.min(20, elast));
 }
 
-// Update displayed values
+// ============================================
+// DISPLAY UPDATES
+// ============================================
 function updateDisplayValues() {
     polyesterVal.textContent = polyesterSlider.value;
     viscoseVal.textContent = viscoseSlider.value;
@@ -119,18 +133,21 @@ function getFibreCrimpText(val) {
     return 'High';
 }
 
-// Core Scoring Functions
+// ============================================
+// CORE SCORING FUNCTIONS
+// ============================================
 function calculateFibreScore() {
     const polyester = parseInt(polyesterSlider.value) / 100;
     const viscose = parseInt(viscoseSlider.value) / 100;
     const wool = parseInt(woolSlider.value) / 100;
     const elastane = parseInt(elastaneSlider.value) / 100;
-    const lengthScore = parseInt(fibreLengthSlider.value) / 100;
-    const denierScore = parseInt(fibreDenierSlider.value) / 100;
-    const crimpScore = parseInt(fibreCrimpSlider.value) / 100;
+    const lengthScore = 1 - (parseInt(fibreLengthSlider.value) / 100);
+    const denierScore = 1 - (parseInt(fibreDenierSlider.value) / 100);
+    const crimpScore = 1 - (parseInt(fibreCrimpSlider.value) / 100);
     
+    // Higher polyester = lower pilling susceptibility (good)
     let blendScore = 1 - (polyester * 0.7 + viscose * 0.5 + wool * 0.6 + elastane * 0.4);
-    blendScore = Math.min(1, Math.max(0, blendScore));
+    blendScore = Math.min(1, Math.max(0.1, blendScore));
     
     let score = (lengthScore * 0.25) + (denierScore * 0.25) + (crimpScore * 0.2) + (blendScore * 0.3);
     return Math.min(1, Math.max(0.1, score));
@@ -138,13 +155,16 @@ function calculateFibreScore() {
 
 function calculateYarnScore() {
     const twist = parseInt(twistSlider.value);
-    let twistScore = 1 - Math.abs(twist - 800) / 400;
-    twistScore = Math.min(1, Math.max(0.2, twistScore));
+    // Optimal twist is 800 tpm — deviation increases susceptibility
+    let twistScore = Math.abs(twist - 800) / 400;
+    twistScore = Math.min(0.8, Math.max(0.1, twistScore));
+    twistScore = 1 - twistScore; // Invert so higher = better
     
     const hairiness = parseFloat(hairinessSlider.value);
     let hairinessScore = 1 - (hairiness - 2.0) / 6.0;
     hairinessScore = Math.min(1, Math.max(0.1, hairinessScore));
     
+    // Ring-spun has higher pilling susceptibility than open-end
     let spinningScore = (yarnMethod === 'ring') ? 0.7 : 0.3;
     
     let score = (twistScore * 0.35) + (hairinessScore * 0.35) + (spinningScore * 0.2) + (0.5 * 0.1);
@@ -152,19 +172,25 @@ function calculateYarnScore() {
 }
 
 function calculateConstructionScore() {
+    // FIX RT-003: Lower score = better (less pilling susceptibility)
     let weaveScore = 0;
-    if (weaveType === 'plain') weaveScore = 0.2;
-    else if (weaveType === 'twill') weaveScore = 0.4;
-    else weaveScore = 0.6;
+    if (weaveType === 'plain') weaveScore = 0.1;   // Best
+    else if (weaveType === 'twill') weaveScore = 0.3;
+    else weaveScore = 0.5;                         // Satin = worst
     
+    // FIX RT-005: Add bounds to density components
     const warp = parseInt(warpSlider.value);
     const weft = parseInt(weftSlider.value);
-    let densityScore = 1 - ((60 - warp) / 40 + (55 - weft) / 35) / 2;
-    densityScore = Math.min(1, Math.max(0.2, densityScore));
+    let warpComponent = (60 - warp) / 40;
+    let weftComponent = (55 - weft) / 35;
+    warpComponent = Math.min(1, Math.max(0, warpComponent));
+    weftComponent = Math.min(1, Math.max(0, weftComponent));
+    let densityScore = 1 - (warpComponent + weftComponent) / 2;
+    densityScore = Math.min(1, Math.max(0.1, densityScore));
     
     const mass = parseInt(massSlider.value);
     let massScore = 1 - (mass - 80) / 220;
-    massScore = Math.min(1, Math.max(0.2, massScore));
+    massScore = Math.min(1, Math.max(0.1, massScore));
     
     let score = (weaveScore * 0.4) + (densityScore * 0.4) + (massScore * 0.2);
     return Math.min(1, Math.max(0.1, score));
@@ -202,7 +228,8 @@ function calculatePillingClass() {
     const constructionScore = calculateConstructionScore();
     const finishingMod = calculateFinishingModifier();
     
-    let pss = 0.5 * fibreScore * yarnScore * constructionScore * finishingMod;
+    // FIX RT-008: Allow PSS as low as 0.1 to reach Class 5
+    let pss = 0.1 + (fibreScore * yarnScore * constructionScore * finishingMod) * 0.4;
     pss = Math.min(0.95, Math.max(0.05, pss));
     
     let pillingClass = 1 + (1 - pss) * 4;
@@ -211,18 +238,22 @@ function calculatePillingClass() {
     return { pillingClass, pss, fibreScore, yarnScore, constructionScore, finishingMod };
 }
 
+// FIX RT-009: Improved relative influence calculation
 function calculateRelativeInfluence(fibreScore, yarnScore, constructionScore, finishingMod) {
-    const fibreInf = fibreScore * 0.35;
-    const yarnInf = yarnScore * 0.25;
-    const constInf = constructionScore * 0.25;
-    const finishInf = finishingMod * 0.15;
-    const total = fibreInf + yarnInf + constInf + finishInf;
+    // For finishing, lower modifier = better performance = higher influence credit
+    const finishPerformance = 1 - (finishingMod - 0.5) / 0.7;
+    const finishInfluenceRaw = finishPerformance * 0.15;
+    const fibreInfluenceRaw = (1 - fibreScore) * 0.35;
+    const yarnInfluenceRaw = (1 - yarnScore) * 0.25;
+    const constInfluenceRaw = (1 - constructionScore) * 0.25;
+    
+    const total = fibreInfluenceRaw + yarnInfluenceRaw + constInfluenceRaw + finishInfluenceRaw;
     
     return {
-        fibre: Math.round((fibreInf / total) * 100),
-        yarn: Math.round((yarnInf / total) * 100),
-        construction: Math.round((constInf / total) * 100),
-        finishing: Math.round((finishInf / total) * 100)
+        fibre: Math.round((fibreInfluenceRaw / total) * 100),
+        yarn: Math.round((yarnInfluenceRaw / total) * 100),
+        construction: Math.round((constInfluenceRaw / total) * 100),
+        finishing: Math.round((finishInfluenceRaw / total) * 100)
     };
 }
 
@@ -233,28 +264,63 @@ function generateExplanation(fibreScore, yarnScore, constructionScore, finishing
     const weaveMap = { plain: 'Plain', twill: 'Twill', satin: 'Satin' };
     const hasAntiPilling = document.getElementById('antiPilling').checked;
     const hasResin = document.getElementById('resin').checked;
+    const hasSoftening = document.getElementById('softening').checked;
     
-    if (polyester > 70) explanations.push(`• Polyester ${polyester}% provides strong anchor but may hold pills longer`);
-    else if (polyester < 50) explanations.push(`• Polyester ${polyester}% is below optimal range (60-80%) — consider increasing`);
-    else explanations.push(`• Polyester ${polyester}% is within optimal range`);
+    // Fibre explanation
+    if (polyester >= 70) {
+        explanations.push(`• Polyester ${polyester}%: Reduces pilling susceptibility but pills that form persist longer [CITATION: Wang Lu et al., 1994]`);
+    } else if (polyester <= 50) {
+        explanations.push(`• Polyester ${polyester}% is below optimal range (60-80%) — increasing would reduce pilling susceptibility [ASSUMPTION]`);
+    } else {
+        explanations.push(`• Polyester ${polyester}% is within optimal range for this blend`);
+    }
     
-    if (twist >= 700 && twist <= 900) explanations.push(`• Twist ${twist} tpm is optimal for this blend`);
-    else if (twist < 700) explanations.push(`• Twist ${twist} tpm is below optimal (700-900) — increase twist to reduce pilling`);
-    else explanations.push(`• Twist ${twist} tpm is above optimal — may affect hand-feel`);
+    // Yarn explanation
+    if (twist >= 700 && twist <= 900) {
+        explanations.push(`• Twist ${twist} tpm is optimal — higher twist reduces pilling [CITATION: 12—Pilling of Fabrics, 1956]`);
+    } else if (twist < 700) {
+        explanations.push(`• Twist ${twist} tpm is below optimal (700-900) — increase to reduce pilling [ASSUMPTION]`);
+    } else {
+        explanations.push(`• Twist ${twist} tpm is above optimal — may affect hand-feel but pilling resistance is good`);
+    }
     
-    explanations.push(`• ${weaveMap[weaveType]} weave provides ${weaveType === 'plain' ? 'best' : (weaveType === 'twill' ? 'moderate' : 'least')} pilling resistance`);
+    // Weave explanation
+    if (weaveType === 'plain') {
+        explanations.push(`• Plain weave provides best pilling resistance among weave types [CITATION: 12—Pilling of Fabrics, 1956]`);
+    } else if (weaveType === 'satin') {
+        explanations.push(`• Satin weave has higher pilling susceptibility — consider plain or twill for better performance [CITATION: 12—Pilling of Fabrics, 1956]`);
+    } else {
+        explanations.push(`• Twill weave provides moderate pilling resistance — acceptable for most applications`);
+    }
     
-    if (hasResin) explanations.push(`• Resin finishing significantly reduces pilling (most effective treatment)`);
-    else if (hasAntiPilling) explanations.push(`• Anti-pilling treatment active — effective but resin would be stronger`);
+    // Finishing explanation
+    if (hasResin) {
+        explanations.push(`• Resin finishing: Most effective anti-pilling treatment — reduces susceptibility by ~30% [CITATION: Wang Lu et al., 1994]`);
+    } else if (hasAntiPilling) {
+        explanations.push(`• Anti-pilling chemical treatment active — resin would be even more effective [CITATION: 12—Pilling of Fabrics, 1956]`);
+    }
     
-    if (confidence < 60) explanations.push(`⚠️ Low confidence — some parameters are outside validated ranges`);
-    else if (pillingClass >= 3.5) explanations.push(`✅ Excellent predicted class — ready for market`);
-    else if (pillingClass >= 3) explanations.push(`✅ Acceptable class — meets ISO standard`);
-    else explanations.push(`⚠️ Class below ISO target — adjust parameters to reach ≥3`);
+    if (hasSoftening) {
+        explanations.push(`⚠️ Softening agent increases pilling susceptibility — consider removing if pilling is a concern [CITATION: Wang Lu et al., 1994]`);
+    }
     
-    return explanations.slice(0, 6);
+    // Overall assessment
+    if (confidence < 60) {
+        explanations.push(`⚠️ Low confidence (${confidence}%) — some parameters outside validated ranges. Results are directional.`);
+    } else if (pillingClass >= 4) {
+        explanations.push(`✅ Excellent predicted class (${pillingClass.toFixed(1)}) — exceeds ISO 12945-2:2000 target. Ready for market.`);
+    } else if (pillingClass >= 3) {
+        explanations.push(`✅ Acceptable class (${pillingClass.toFixed(1)}) — meets ISO 12945-2:2000 standard (≥3).`);
+    } else {
+        explanations.push(`⚠️ Class below ISO target (${pillingClass.toFixed(1)} < 3) — adjust parameters: increase polyester%, increase twist, use resin finishing.`);
+    }
+    
+    return explanations.slice(0, 8);
 }
 
+// ============================================
+// MAIN UPDATE FUNCTION
+// ============================================
 function updateAll() {
     updateDisplayValues();
     
@@ -263,7 +329,7 @@ function updateAll() {
     pillingClassSpan.textContent = roundedClass;
     
     const pass = roundedClass >= 3;
-    pillingStatusSpan.textContent = pass ? `✅ PASS (≥3)` : `❌ FAIL (<3)`;
+    pillingStatusSpan.textContent = pass ? `✅ PASS (≥3) — ISO 12945-2:2000 compliant` : `❌ FAIL (<3) — does not meet ISO standard`;
     pillingStatusSpan.className = pass ? 'result-status' : 'result-status fail';
     
     const um = calculateUncertaintyMass();
@@ -281,7 +347,8 @@ function updateAll() {
     constBar.style.width = influences.construction + '%';
     finishBar.style.width = influences.finishing + '%';
     
-    let durability = Math.round((pillingClass - 1) / 4 * 100);
+    // Trade-offs
+    let durability = Math.round((roundedClass - 1) / 4 * 100);
     durability = Math.min(95, Math.max(10, durability));
     durabilityBar.style.width = durability + '%';
     
@@ -293,18 +360,22 @@ function updateAll() {
     handfeel = Math.min(95, Math.max(20, handfeel));
     handfeelBar.style.width = handfeel + '%';
     
+    // FIX RT-011: Define baseline explicitly
     let costIncrease = 0;
     if (document.getElementById('resin').checked) costIncrease += 12;
     if (document.getElementById('antiPilling').checked) costIncrease += 5;
     if (document.getElementById('singeing').checked) costIncrease += 3;
     if (document.getElementById('mercerization').checked) costIncrease += 4;
     if (document.getElementById('shearing').checked) costIncrease += 3;
-    costEstimateSpan.textContent = `+${costIncrease}% vs baseline`;
+    costEstimateSpan.textContent = `+${costIncrease}% vs baseline (no finishing)`;
     
     const explanations = generateExplanation(fibreScore, yarnScore, constructionScore, finishingMod, roundedClass, confidence);
     explanationList.innerHTML = explanations.map(e => `<li>${e}</li>`).join('');
 }
 
+// ============================================
+// RESET FUNCTION
+// ============================================
 function resetToDefaults() {
     polyesterSlider.value = '60';
     viscoseSlider.value = '30';
@@ -337,6 +408,48 @@ function resetToDefaults() {
     updateAll();
 }
 
-// Initialize
+// ============================================
+// EVENT LISTENERS
+// ============================================
+function initEventListeners() {
+    const sliders = [polyesterSlider, viscoseSlider, woolSlider, elastaneSlider, fibreLengthSlider, fibreDenierSlider, fibreCrimpSlider, twistSlider, hairinessSlider, warpSlider, weftSlider, massSlider];
+    sliders.forEach(slider => {
+        slider.addEventListener('input', (e) => {
+            if (slider === polyesterSlider || slider === viscoseSlider || slider === woolSlider || slider === elastaneSlider) {
+                enforceFibreBlend(slider);
+            }
+            updateAll();
+        });
+    });
+
+    document.querySelectorAll('[data-yarn]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-yarn]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            yarnMethod = btn.getAttribute('data-yarn');
+            updateAll();
+        });
+    });
+
+    document.querySelectorAll('[data-weave]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-weave]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            weaveType = btn.getAttribute('data-weave');
+            updateAll();
+        });
+    });
+
+    const checkboxes = ['singeing', 'mercerization', 'antiPilling', 'resin', 'softening', 'shearing'];
+    checkboxes.forEach(id => {
+        document.getElementById(id).addEventListener('change', updateAll);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', resetToDefaults);
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
 initEventListeners();
 updateAll();
