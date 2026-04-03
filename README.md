@@ -4,6 +4,7 @@ https://img.shields.io/badge/STATUS-Building-4ade80?style=flat-square
 https://img.shields.io/badge/version-v0.1.0-orange
 https://img.shields.io/badge/InoCrowd-Pilling%20Challenge-0052CC?style=flat-square
 https://img.shields.io/badge/Due-April%206%2C%202026-red?style=flat-square
+[![DOI](https://zenodo.org/badge/1200586477.svg)](https://doi.org/10.5281/zenodo.19409957)
 
 Quantifying the Relative Influence of Parameters on Pilling Results in Woven Fabrics
 A data-driven, explainable simulator for textile pilling prediction.
