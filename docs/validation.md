@@ -1,16 +1,15 @@
 # Validation Protocol — Textile Pilling Simulator
 
-## InoCrowd Challenge 2026 | NICE Challenge 2026 (Secondary Submission)
-
 **Version:** v1.0
 **Date:** April 2026
 **Author:** Sheldon K. Salmon — AionSystem
+**License:** GPL-3.0
 
 ---
 
 ## Overview
 
-This document describes the validation methodology for the Textile Pilling Simulator. Due to the 4-day development timeline and lack of access to proprietary textile manufacturing data, validation is conducted through:
+This document describes the validation methodology for the Textile Pilling Simulator. Validation is conducted through:
 
 1. **Literature calibration** — Parameter weightings derived from published research
 2. **Edge case testing** — Extreme inputs produce expected outcomes
@@ -21,7 +20,7 @@ This document describes the validation methodology for the Textile Pilling Simul
 
 ## Validation Framework (Adapted from FSVE v3.8)
 
-The simulator's scoring engine was validated using principles from the AION Constitutional Stack's certainty engineering methodology. While not a full FSVE validation (which requires FCL entries), the following axes were assessed:
+The simulator's scoring engine was validated using principles from the AION Constitutional Stack's certainty engineering methodology. The following axes were assessed:
 
 | FSVE Axis | Assessment | Score (0-1) |
 |-----------|-----------|-------------|
@@ -189,7 +188,7 @@ The simulator's scoring engine was validated using principles from the AION Cons
 | Martindale method (abrasion cycles) | Not simulated — parameter-based prediction | ⚠️ Not applicable |
 | Visual rating vs. instrumental | Not applicable to simulation | ⚠️ Not applicable |
 
-**Note:** The simulator predicts pilling class based on input parameters, not by simulating the Martindale apparatus. This is consistent with the challenge requirement: *"estimates each parameter's relative influence and simulates changes per stage to predict the expected pilling class."*
+**Note:** The simulator predicts pilling class based on input parameters, not by simulating the Martindale apparatus. This is consistent with the goal of estimating pilling class from process parameters.
 
 ---
 
@@ -231,7 +230,7 @@ The Textile Pilling Simulator v1.0 has been validated against:
 
 **Validation status:** PROVISIONAL — pending real-world ground truth data. The simulator's predictions are directional and intended for comparative scenario analysis, not absolute certification.
 
-**Path to full validation (post-challenge):**
+**Path to full validation:**
 1. Collect ground truth pilling test results from 30+ fabric samples
 2. Calibrate parameter weightings against observed outcomes
 3. Update scoring engine to M-MODERATE or M-STRONG per FSVE framework
@@ -242,9 +241,9 @@ The Textile Pilling Simulator v1.0 has been validated against:
 
 1. **Wang Lu, S.S. Wang, S.J. Du, Y.Y. Liu, S.D. Li.** *A STUDY OF PILLING CHARACTERS AND ITS AFFECTING FACTORS OF RABBIT HAIR-WOOL WOVEN FABRIC.* Journal of Textile Research, 1994.
 
-2. **Anonymous.** *12—Pilling of Fabrics.* Journal of the Textile Institute Transactions, 1956.
+2. **Yang, Zhang, Shen.** *Reducing pilling of knitted woolen fabric based on micro-scale.* 2017.
 
-3. **Yang, Zhang, Shen.** *Reducing pilling of knitted woolen fabric based on micro-scale.* 2017.
+3. **Anonymous.** *12—Pilling of Fabrics.* Journal of the Textile Institute Transactions, 1956.
 
 4. **Ghosh, Das, Saha.** *Hairiness of Jute Yarn.* 1987.
 
