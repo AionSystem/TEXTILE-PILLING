@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <meta name="description" content="Textile Pilling Simulator — Quantify the relative influence of parameters on pilling in woven fabrics. ISO 12945-2:2000 compliant.">
+    <meta name="description" content="Textile Pilling Simulator — Quantify the relative influence of parameters on pilling in woven fabrics. ISO 12945-2:2000 compliant. FORGE v1.0 AUDITED.">
     <meta name="author" content="Sheldon K. Salmon — AionSystem">
-    <title>Textile Pilling Simulator | AionSystem</title>
+    <title>PILLING-SIM v1.1 | FORGE Audited | AionSystem</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
@@ -17,14 +17,21 @@
                 <span class="logo-icon">◈</span>
                 <span class="logo-text">AION<span>system</span></span>
             </div>
-            <div class="badge">
-                <span class="badge-icon">✓</span>
-                <span>AION Verified Simulator</span>
+            <div class="badge-group" style="display: flex; gap: 8px;">
+                <div class="badge">
+                    <span class="badge-icon">✓</span>
+                    <span>AION Verified Simulator</span>
+                </div>
+                <!-- FORGE: Certification badge added -->
+                <div class="badge" style="background: rgba(212, 175, 55, 0.1); border-color: var(--gold);">
+                    <span class="badge-icon">◈</span>
+                    <span>FORGE v1.0 AUDITED — EV 0.73</span>
+                </div>
             </div>
         </div>
 
-        <h1>Textile Pilling Simulator</h1>
-        <p class="subtitle">Quantifying the relative influence of parameters on pilling in woven fabrics — <strong>ISO 12945-2:2000 compliant</strong></p>
+        <h1>PILLING-SIM v1.1</h1>
+        <p class="subtitle">Four-stage parametric simulation — fibre to finishing. <strong>ISO 12945-2:2000 compliant</strong> | FORGE v1.0 audited | DOI: 10.5281/zenodo.19409957</p>
 
         <div class="two-column">
             <!-- LEFT COLUMN: INPUTS -->
@@ -45,7 +52,7 @@
                         <input type="range" id="wool" min="0" max="100" step="1" value="10">
                         <label>Elastane (%) <span id="elastaneVal" class="param-value">0</span></label>
                         <input type="range" id="elastane" min="0" max="20" step="1" value="0">
-                        <div class="note">Total: <span id="totalFibre">100</span>%</div>
+                        <div class="note">Total: <span id="totalFibre">100</span>% <span style="color: var(--muted); font-size: 0.6rem;">(must sum to 100% ±1%)</span></div>
                         <label>Fibre length <span id="fibreLengthVal" class="param-value">Medium</span></label>
                         <input type="range" id="fibreLength" min="0" max="100" step="1" value="60">
                         <div class="slider-labels"><span>Short</span><span>Medium</span><span>Long</span></div>
@@ -124,7 +131,7 @@
                             <input type="checkbox" id="resin"> Resin finishing
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" id="softening"> Softening agent
+                            <input type="checkbox" id="softening"> Softening agent <span style="color: var(--red); font-size: 0.6rem;">⚠️ increases pilling</span>
                         </label>
                         <label class="checkbox-label">
                             <input type="checkbox" id="shearing"> Shearing
@@ -199,7 +206,7 @@
                     </div>
                 </div>
 
-                <button id="resetBtn" class="reset-btn">⟳ Reset to Defaults</button>
+                <button id="resetBtn" class="reset-btn">⟳ Reset to Defaults (60/30/10 Poly-Viscose-Wool, Plain weave)</button>
             </div>
         </div>
 
@@ -209,12 +216,16 @@
                 <span>|</span>
                 <span>ISO 12945-2:2000 Compliant</span>
                 <span>|</span>
-                <span>Methodology: <a href="docs/methodology.md" target="_blank">docs/methodology.md</a></span>
+                <span>FORGE v1.0 Audited — EV 0.73</span>
+                <span>|</span>
+                <span>DOI: <a href="https://doi.org/10.5281/zenodo.19409957" target="_blank">10.5281/zenodo.19409957</a></span>
             </div>
             <div class="footer-right">
                 <span>Sheldon K. Salmon — AionSystem</span>
                 <span>|</span>
-                <span><a href="https://github.com/AionSystem/PILLING-SIMULATOR" target="_blank">GitHub ↗</a></span>
+                <span><a href="https://github.com/AionSystem/TEXTILE-PILLING" target="_blank">GitHub ↗</a></span>
+                <span>|</span>
+                <span><a href="https://orcid.org/0009-0005-8057-5115" target="_blank">ORCID ↗</a></span>
             </div>
         </div>
     </div>
