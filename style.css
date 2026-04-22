@@ -215,6 +215,11 @@ input[type="range"]::-webkit-slider-thumb {
     text-align: right;
 }
 
+/* FORGE: Total fibre blend validation indicator */
+#totalFibre {
+    transition: color 0.2s ease, font-weight 0.2s ease;
+}
+
 /* Toggle Buttons */
 .toggle-group {
     display: flex;
@@ -315,6 +320,14 @@ input[type="range"]::-webkit-slider-thumb {
     color: var(--red);
 }
 
+/* FORGE: INVALID COMPOSITION status */
+.result-status.invalid {
+    background: rgba(255, 77, 77, 0.15);
+    color: var(--red);
+    font-weight: 500;
+    border: 1px solid rgba(255, 77, 77, 0.3);
+}
+
 /* Influence Bars */
 .influence-card, .explanation-card, .tradeoff-card {
     background: var(--surface);
@@ -374,6 +387,11 @@ input[type="range"]::-webkit-slider-thumb {
     margin-bottom: 0.5rem;
     color: var(--text);
     line-height: 1.4;
+}
+
+/* FORGE: Warning styling for explanation items */
+.explanation-card li:has(⚠️) {
+    color: var(--amber);
 }
 
 /* Trade-offs */
