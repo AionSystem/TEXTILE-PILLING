@@ -1,6 +1,6 @@
 ![1000008548](https://github.com/user-attachments/assets/7df2469d-f489-488e-91e5-16d45b31b0ec)
 
-# Textile Pilling Simulator — InoCrowd Challenge 2026
+# Textile Pilling Simulator
 
 <!-- STATUS · VERSION · CHALLENGE -->
 [![Status](https://img.shields.io/badge/STATUS-Building-4ade80?style=flat-square)](https://github.com/AionSystem/PILLING-SIMULATOR)
