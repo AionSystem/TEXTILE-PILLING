@@ -1,9 +1,20 @@
 # Validation Protocol — Textile Pilling Simulator
 
-**Version:** v1.0
-**Date:** April 2026
+**Version:** v1.1
+**Date:** June 2026
 **Author:** Sheldon K. Salmon — AionSystem
 **License:** GPL-3.0
+**Audit Status:** FORGE v1.0 Audited — EV 0.73, Certified
+**Repository:** [github.com/AionSystem/TEXTILE-PILLING](https://github.com/AionSystem/TEXTILE-PILLING)
+
+---
+
+## Revision History
+
+| Version | Date | Change |
+|---|---|---|
+| v1.0 | April 2026 | Initial validation protocol — FSVE-axis assessment, 7 edge test cases, ISO compliance check, sensitivity analysis |
+| v1.1 | June 2026 | FORGE v1.0 audit completed (EV 0.73). No changes to test cases, FSVE scores, or methodology — the v1.0 validation held up under audit. Note: the FSVE overall confidence score below (0.73) and the FORGE EV reported elsewhere in this repository (0.73) are the same figure — FSVE is the certainty-scoring component FORGE's audit builds on, not two independent assessments arriving at the same number by coincidence. |
 
 ---
 
@@ -15,6 +26,8 @@ This document describes the validation methodology for the Textile Pilling Simul
 2. **Edge case testing** — Extreme inputs produce expected outcomes
 3. **ISO threshold alignment** — Class ≥3 achievable with reasonable inputs
 4. **Expert heuristic review** — Assumptions labeled and justified
+
+This document should be read alongside `methodology.md` (full parameter framework and scoring formulas) and the repository README's "Calibration Status — Honest Ceiling" section, which states plainly what is and is not yet validated against real production data.
 
 ---
 
@@ -221,19 +234,22 @@ The simulator's scoring engine was validated using principles from the AION Cons
 
 ## Validation Statement
 
-The Textile Pilling Simulator v1.0 has been validated against:
+The Textile Pilling Simulator v1.1 has been validated against:
 
 - ✅ 7 edge test cases covering optimal, worst, boundary, and degradation scenarios
 - ✅ ISO 12945-2:2000 classification threshold (Class ≥3)
 - ✅ Published literature on pilling mechanisms, fibre parameters, yarn parameters, weave effects, and finishing treatments
 - ✅ All assumptions explicitly labeled for evaluator transparency
+- ✅ FORGE v1.0 adversarial audit (EV 0.73, Certified) — confirms the specification and reasoning hold under structured review
 
-**Validation status:** PROVISIONAL — pending real-world ground truth data. The simulator's predictions are directional and intended for comparative scenario analysis, not absolute certification.
+**Validation status:** PROVISIONAL — pending real-world ground truth data. The simulator's predictions are directional and intended for comparative scenario analysis, not absolute certification. FORGE certification reflects the rigor of the specification and audit process; it does not assert that the literature-derived weights have been validated against real production samples. That distinction matters and is stated here deliberately, not as a hedge.
 
 **Path to full validation:**
-1. Collect ground truth pilling test results from 30+ fabric samples
-2. Calibrate parameter weightings against observed outcomes
+1. Collect ground truth pilling test results from real Martindale-tested fabric samples — realistically several dozen samples spanning the parameter space (fibre blends, twist levels, weave types, finishing combinations)
+2. Calibrate parameter weightings against observed outcomes, replacing literature-derived weights with regression-fitted ones
 3. Update scoring engine to M-MODERATE or M-STRONG per FSVE framework
+
+This is the same calibration path described in the README and methodology document — repeated here for anyone reading this file in isolation.
 
 ---
 
@@ -253,4 +269,4 @@ The Textile Pilling Simulator v1.0 has been validated against:
 
 ---
 
-*Document maintained as part of AION Constitutional Stack — Textile Pilling Simulator v1.0*
+*Document maintained as part of AION Constitutional Stack — Textile Pilling Simulator v1.1 — FORGE v1.0 Audited*
