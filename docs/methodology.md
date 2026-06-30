@@ -1,9 +1,20 @@
 # Textile Pilling Simulator — Methodology Document
 
-**Version:** v1.0
-**Date:** April 2026
+**Version:** v1.1
+**Date:** June 2026
 **Author:** Sheldon K. Salmon — AionSystem
 **License:** GPL-3.0
+**Audit Status:** FORGE v1.0 Audited — EV 0.73, Certified
+**Repository:** [github.com/AionSystem/TEXTILE-PILLING](https://github.com/AionSystem/TEXTILE-PILLING)
+
+---
+
+## Revision History
+
+| Version | Date | Change |
+|---|---|---|
+| v1.0 | April 2026 | Initial methodology document — 4-phase parameter framework, PSS scoring architecture, ISO 12945-2:2000 mapping |
+| v1.1 | June 2026 | FORGE v1.0 audit completed (EV 0.73). Document repositioned for open-source release. No changes to the underlying scoring formulas or citations — the v1.0 architecture held up under audit. |
 
 ---
 
@@ -129,15 +140,12 @@ Source: *12—Pilling of Fabrics*, 1956
 The PSS is a composite score from 0.0 (no pilling susceptibility) to 1.0 (severe pilling susceptibility).
 
 ```
-
 PSS_base = 0.50 (neutral starting point)
-
 ```
 
 **Stage 1 — Fibre Contribution:**
 
 ```
-
 fibre_score = (fibre_length_score × 0.25) 
 + (fibre_denier_score × 0.25)
 + (fibre_crimp_score × 0.20)
@@ -149,13 +157,11 @@ Where:
 · fibre_denier_score = 1 - (denier - min_denier) / (max_denier - min_denier)
 · fibre_crimp_score = crimp / max_crimp (capped at 1.0)
 · blend_score = 1 - (polyester_pct / 100)  (lower polyester = higher susceptibility)
-
 ```
 
 **Stage 2 — Yarn Contribution:**
 
 ```
-
 yarn_score = (twist_score × 0.35)
 + (hairiness_score × 0.35)
 + (spinning_score × 0.20)
@@ -167,13 +173,11 @@ Where:
 · hairiness_score = hairiness / max_hairiness (capped at 1.0)
 · spinning_score = 0.3 if ring-spun, 0.2 if open-end
 · count_score = 1 - (count - min_count) / (max_count - min_count)
-
 ```
 
 **Stage 3 — Construction Contribution:**
 
 ```
-
 construction_score = (weave_score × 0.40)
 + (density_score × 0.40)
 + (mass_score × 0.20)
@@ -183,34 +187,28 @@ Where:
 · weave_score = 0.2 (plain), 0.4 (twill), 0.6 (satin)
 · density_score = 1 - (1 - (warp_density / target_density)) × (1 - (weft_density / target_density))
 · mass_score = 1 - (mass / max_mass) (higher mass = lower score)
-
 ```
 
 **Stage 4 — Finishing Contribution:**
 
 ```
-
 finishing_modifier = 1.0
 × (0.85 if singeing else 1.0)
 × (0.85 if mercerization else 1.0)
 × (0.70 if resin else 1.0)
 × (0.80 if anti_pilling else 1.0)
 × (1.15 if softening else 1.0)
-
 ```
 
 **Final PSS:**
 
 ```
-
 PSS_final = 0.1 + (fibre_score × yarn_score × construction_score × finishing_modifier) × 0.4
-
 ```
 
 ### Pilling Class Prediction
 
 ```
-
 Pilling_Class = 1 + (1 - PSS_final) × 4
 
 Result mapping:
@@ -219,7 +217,6 @@ Class 4: PSS_final 0.21–0.40 (Slight pilling)
 Class 3: PSS_final 0.41–0.60 (Moderate pilling — TARGET)
 Class 2: PSS_final 0.61–0.80 (Severe pilling)
 Class 1: PSS_final ≥ 0.81 (Very severe pilling)
-
 ```
 
 **Pass/Fail:** Class ≥ 3 = PASS per ISO 12945-2:2000 requirement.
@@ -227,20 +224,18 @@ Class 1: PSS_final ≥ 0.81 (Very severe pilling)
 ### Confidence Score
 
 ```
-
 Confidence = 1 - Uncertainty_Mass
 
 Where UM increases when inputs are outside validated ranges:
 
-Condition UM Penalty
-Fibre blend outside typical ratios (polyester < 40% or > 90%) +0.10
-Twist outside 700–900 tpm +0.10
-Density outside 35–55 picks/cm +0.05
-Untested finishing combination (>3 treatments) +0.05
-Blend includes >10% elastane +0.05
+Condition                                                       UM Penalty
+Fibre blend outside typical ratios (polyester < 40% or > 90%)   +0.10
+Twist outside 700–900 tpm                                       +0.10
+Density outside 35–55 picks/cm                                  +0.05
+Untested finishing combination (>3 treatments)                  +0.05
+Blend includes >10% elastane                                    +0.05
 
 Confidence is capped at 0.95 (no 100% certainty in textile prediction).
-
 ```
 
 ---
@@ -259,12 +254,10 @@ Confidence is capped at 0.95 (no 100% certainty in textile prediction).
 ### Per-Group Influence Calculation
 
 ```
-
 influence_fibre = (1 - fibre_score) × 0.35 / total
 influence_yarn = (1 - yarn_score) × 0.25 / total
 influence_construction = (1 - construction_score) × 0.25 / total
 influence_finishing = (1 - finishing_modifier_normalized) × 0.15 / total
-
 ```
 
 **Output format:** Percentages summing to 100%, displayed with explanation.
@@ -315,6 +308,8 @@ The simulator predicts outcomes based on parameter inputs, calibrated to ISO cla
 
 ## Assumption Register
 
+This register is the honest ceiling of this methodology. Every entry here is a literature-derived or logically-inferred value, not a value fitted against real Martindale-tested production data. The path to converting these from `[ASSUMPTION]` to `[D]` (data-grade) is real-sample calibration — see the repository README's "Calibration Status" section for the practical path.
+
 | Assumption | Justification | Label |
 |------------|---------------|-------|
 | Polyester acts as anchor fibre similar to nylon | Nylon rules from *12—Pilling of Fabrics*, 1956 extended to polyester | `[ASSUMPTION]` |
@@ -341,4 +336,4 @@ The simulator predicts outcomes based on parameter inputs, calibrated to ISO cla
 
 ---
 
-*Methodology maintained as part of AION Constitutional Stack — Textile Pilling Simulator v1.0*
+*Methodology maintained as part of AION Constitutional Stack — Textile Pilling Simulator v1.1 — FORGE v1.0 Audited*
